@@ -8,14 +8,45 @@
             </template>
 
             <v-data-table :headers="headers" :items="desserts" :search="search" :loading="isLoading"
-                loading-text="Loading... Please wait"></v-data-table>
+                loading-text="Loading... Please wait" @click:row="handleClick"></v-data-table>
         </v-card>
+
+        <v-dialog v-model="dialog">
+            <v-card>
+                <v-card-title class="headline">{{ textshow }}</v-card-title>
+                <v-table>
+                    <thead>
+                        <tr>
+                            <th class="text-left">
+                                Name
+                            </th>
+                            <th class="text-left">
+                                Calories
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>hehe</td>
+                            <td>hehehe</td>
+                        </tr>
+                    </tbody>
+                </v-table>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="green darken-1" text @click="dialog = false">Close</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </div>
 </template>
 <script>
 export default {
     data() {
         return {
+            textshow: 'now loading...',
+            textdetail: 'now loading...',
+            dialog: false,
             isLoading: true,
             search: '',
             headers: [
@@ -33,6 +64,7 @@ export default {
                 { key: 'KETERANGAN', title: 'KETERANGAN' },
             ],
             desserts: [],
+            kontainer: [],
         }
     },
     mounted() {
@@ -40,17 +72,23 @@ export default {
     },
     methods: {
         async fetchdata() {
-            const dataFetch = await $fetch('https://bos.multiterminal.co.id/tpk_ipc/cgis/application.php/ServiceNewBos')
+            const dataFetch = await $fetch('http://10.1.5.49/tpk_ipc/cgis/application.php/ServiceNewBos')
             this.desserts = dataFetch
             this.isLoading = false
             console.log(this.desserts)
+        },
+        async handleClick(event, row) {
+            this.textshow = row.item.CONSIGNEE
+            this.dialog = true
+            var data = new FormData();
+            data.append("id", row.item.ID);
+            const kontainers = await $fetch('http://10.1.5.49/tpk_ipc/cgis/application.php/ServiceNewBos/get_detail_spjm', {
+                method: 'POST',
+                body: data
+            })
+            this.kontainer = kontainers
+            console.log(this.kontainer)
         }
-        // handleClick(event, row) {
-        //     this.textshow = row.item.title
-        //     this.textdetail = row.item.description
-        //     this.dialog = true
-        //     console.log("Clicked item: ", row.item.title)
-        // }
     }
 }
 </script>

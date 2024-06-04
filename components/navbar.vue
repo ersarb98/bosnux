@@ -7,7 +7,7 @@
         ☰
       </button>
       <nuxt-link to="/" class="text-white">Home</nuxt-link>
-      <nuxt-link to="/about" class="text-white">About</nuxt-link>
+      <nuxt-link to="/" class="text-white">About</nuxt-link>
     </div>
   </nav>
 </template>

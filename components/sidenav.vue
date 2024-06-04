@@ -16,7 +16,7 @@
           <nuxt-link to="/" class="block py-2 px-4 rounded hover:bg-gray-700">Home</nuxt-link>
         </li>
         <li class="my-2">
-          <nuxt-link to="/about" class="block py-2 px-4 rounded hover:bg-gray-700">About</nuxt-link>
+          <nuxt-link to="/" class="block py-2 px-4 rounded hover:bg-gray-700">About</nuxt-link>
         </li>
       </ul>
     </nav>
