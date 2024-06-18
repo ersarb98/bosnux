@@ -16,7 +16,7 @@
           <nuxt-link to="/" class="block py-2 px-4 rounded hover:bg-gray-700">Home</nuxt-link>
         </li>
         <li class="my-2">
-          <nuxt-link to="/" class="block py-2 px-4 rounded hover:bg-gray-700">About</nuxt-link>
+          <button class="block py-2 px-4 rounded hover:bg-gray-700">Logout</button>
         </li>
       </ul>
     </nav>
@@ -24,7 +24,6 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
 
 const props = defineProps({
   isOpen: {

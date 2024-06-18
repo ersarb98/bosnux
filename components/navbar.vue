@@ -7,13 +7,15 @@
         ☰
       </button>
       <nuxt-link to="/" class="text-white">Home</nuxt-link>
-      <nuxt-link to="/" class="text-white">About</nuxt-link>
+      <button @click="logout()" class="text-white">Logout</button>
     </div>
   </nav>
 </template>
 
 <script setup>
-// No script setup needed for this example
+const logout = async () => {
+  console.log('logged out')
+}
 </script>
 
 <style scoped>

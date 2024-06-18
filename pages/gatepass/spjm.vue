@@ -40,6 +40,8 @@
         </v-dialog>
     </div>
 </template>
+
+
 <script>
 export default {
     data() {
@@ -89,6 +91,14 @@ export default {
             this.kontainer = kontainers
             console.log(this.kontainer)
         }
+    },
+    setup() {
+        definePageMeta({
+            middleware: ["auth"]
+            // or middleware: 'auth'
+        })
+
+        return {}
     }
 }
 </script>
