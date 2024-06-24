@@ -44,7 +44,7 @@
 <script setup>
 
 const username = ref('ersarb');
-const password = ref('123456');
+const password = ref('12345678');
 const router = useRouter();
 
 const login = async () => {
