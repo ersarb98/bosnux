@@ -4,15 +4,29 @@
     <ul>
       <li v-for="menu in menus" :key="menu.ID">
         <i :class="menu.ICON"></i>
-        <a :href="menu.URL" :target="menu.TARGET">{{ menu.JUDUL_MENU }}</a>
-        <ul v-if="menu.children">
-          <li v-for="child in menu.children" :key="child.ID">
-            <i :class="child.ICON"></i>
-            <!-- <a :href="child.URL" :target="child.TARGET">{{ child.JUDUL_MENU }}</a> -->
-            <NuxtLink :to="child.URL">{{ child.JUDUL_MENU }}</NuxtLink>
-
-          </li>
-        </ul>
+        <!-- <a :href="menu.URL" :target="menu.TARGET">{{ menu.JUDUL_MENU }}</a> -->
+        <div v-if="menu.TIPE === 'M' && menu.ID_PARENT === null">
+          <NuxtLink :to="menu.URL">{{ menu.JUDUL_MENU }}</NuxtLink>
+        </div>
+        <div v-else class="relative">
+          <button @click="toggleDropdown(menu.ID)" class="inline-flex items-center">
+            <NuxtLink :to="menu.URL">{{ menu.JUDUL_MENU }}</NuxtLink>
+            <svg class="ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+              aria-hidden="true">
+              <path fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd" />
+            </svg>
+          </button>
+          <ul v-if="openDropdownId === menu.ID"
+            class="dropdown-menu absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+            <li v-for="child in menu.children" :key="child.ID"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              <i :class="child.ICON"></i>
+              <NuxtLink :to="child.URL">{{ child.JUDUL_MENU }}</NuxtLink>
+            </li>
+          </ul>
+        </div>
       </li>
     </ul>
   </div>
@@ -22,6 +36,13 @@
 
 definePageMeta({
   middleware: 'auth',
+});
+
+const props = defineProps({
+  menu: {
+    type: Object,
+    required: true
+  }
 });
 
 // Initial fetch
@@ -35,6 +56,8 @@ const { data, error } = useFetch('http://127.0.0.1:8000/api/menu_spa', {
 
 const menus = ref([]);
 const organizedMenus = ref([]);
+const dropdownOpen = ref(false);
+const openDropdownId = ref(null);
 
 function organizeMenus(menus) {
   const menuMap = {};
@@ -58,6 +81,10 @@ function organizeMenus(menus) {
   return rootMenus;
 }
 
+const toggleDropdown = (menuId) => {
+  openDropdownId.value = openDropdownId.value === menuId ? null : menuId;
+};
+
 // Watch for changes in the fetch data
 watch(data, (newData) => {
   if (newData) {
@@ -66,7 +93,12 @@ watch(data, (newData) => {
   }
 }, { immediate: true });
 
+
 </script>
 
 
-<style lang="scss" scoped></style>
+<style scoped>
+.dropdown-menu {
+  z-index: 10;
+}
+</style>
