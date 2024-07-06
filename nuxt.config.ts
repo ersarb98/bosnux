@@ -1,6 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 export default defineNuxtConfig({
+  runtimeConfig: {
+    public: {
+      apiBase: 'http://127.0.0.1:8000/api', // Add your base URL here
+    },
+  },
   build: {
     transpile: ['vuetify'],
   },

@@ -1,104 +1,110 @@
 <template>
-    <div>
-        <NuxtLink to="/gatepass/sppmp">ke sppmp</NuxtLink>
-        <v-card title="Gatepass SPJM" flat>
-            <template v-slot:text>
-                <v-text-field v-model="search" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined"
-                    hide-details single-line></v-text-field>
-            </template>
-
-            <v-data-table :headers="headers" :items="desserts" :search="search" :loading="isLoading"
-                loading-text="Loading... Please wait" @click:row="handleClick"></v-data-table>
+    <v-container>
+      <!-- Add a search input field -->
+      <v-text-field
+        v-model="search"
+        label="Pencarian Cepat (3 Bulan Terakhir)"
+        class="mb-4"
+        append-icon="mdi-magnify"
+      ></v-text-field>
+      
+      <v-data-table
+        :headers="headers"
+        :items="filteredItems"
+        class="elevation-1"
+        :search="search"
+      >
+        <template v-slot:item="{ item }">
+          <tr @click="handleRowClick(item)">
+            <td>{{ item.ID }}</td>
+            <td>{{ item.NAMA }}</td>
+            <td>{{ item.NO_DOK }}</td>
+            <td>{{ item.TGL_DOK }}</td>
+            <td>{{ item.STATUS_INPUT }}</td>
+            <td>{{ item.KD_REQ }}</td>
+            <td>{{ item.CONSIGNEE }}</td>
+            <td>{{ item.RESPONSE_REQ }}</td>
+            <td>{{ item.KETERANGAN }}</td>
+          </tr>
+        </template>
+      </v-data-table>
+  
+      <!-- Modal Dialog -->
+      <v-dialog v-model="dialog" max-width="500">
+        <v-card>
+          <v-card-title>
+            <span class="headline">Row Details</span>
+          </v-card-title>
+          <v-card-text>
+            <div>ID: {{ selectedItem.ID }}</div>
+            <div>Nama: {{ selectedItem.NAMA }}</div>
+            <div>No Dokumen: {{ selectedItem.NO_DOK }}</div>
+            <div>Tanggal Dokumen: {{ selectedItem.TGL_DOK }}</div>
+            <div>Status Input: {{ selectedItem.STATUS_INPUT }}</div>
+            <div>Kode Request: {{ selectedItem.KD_REQ }}</div>
+            <div>Consignee: {{ selectedItem.CONSIGNEE }}</div>
+            <div>Response Request: {{ selectedItem.RESPONSE_REQ }}</div>
+            <div>Keterangan: {{ selectedItem.KETERANGAN }}</div>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
+          </v-card-actions>
         </v-card>
-
-        <v-dialog v-model="dialog">
-            <v-card>
-                <v-card-title class="headline">{{ textshow }}</v-card-title>
-                <v-table>
-                    <thead>
-                        <tr>
-                            <th class="text-left">
-                                Name
-                            </th>
-                            <th class="text-left">
-                                Calories
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>hehe</td>
-                            <td>hehehe</td>
-                        </tr>
-                    </tbody>
-                </v-table>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="green darken-1" text @click="dialog = false">Close</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
-    </div>
-</template>
-
-
-<script>
-export default {
-    data() {
-        return {
-            textshow: 'now loading...',
-            textdetail: 'now loading...',
-            dialog: false,
-            isLoading: true,
-            search: '',
-            headers: [
-                {
-                    align: 'start',
-                    key: 'ID',
-                    title: 'ID',
-                },
-                { key: 'NAMA', title: 'NAMA' },
-                { key: 'NO_DOK', title: 'NO_DOK' },
-                { key: 'TGL_DOK', title: 'TGL_DOK' },
-                { key: 'STATUS_INPUT', title: 'STATUS_INPUT' },
-                { key: 'KD_REQ', title: 'KD_REQ' },
-                { key: 'RESPONSE_REQ', title: 'RESPONSE_REQ' },
-                { key: 'KETERANGAN', title: 'KETERANGAN' },
-            ],
-            desserts: [],
-            kontainer: [],
-        }
-    },
-    mounted() {
-        this.fetchdata()
-    },
-    methods: {
-        async fetchdata() {
-            const dataFetch = await $fetch('http://10.1.5.49/tpk_ipc/cgis/application.php/ServiceNewBos')
-            this.desserts = dataFetch
-            this.isLoading = false
-            console.log(this.desserts)
-        },
-        async handleClick(event, row) {
-            this.textshow = row.item.CONSIGNEE
-            this.dialog = true
-            var data = new FormData();
-            data.append("id", row.item.ID);
-            const kontainers = await $fetch('http://10.1.5.49/tpk_ipc/cgis/application.php/ServiceNewBos/get_detail_spjm', {
-                method: 'POST',
-                body: data
-            })
-            this.kontainer = kontainers
-            console.log(this.kontainer)
-        }
-    },
-    setup() {
-        definePageMeta({
-            middleware: ["auth"]
-            // or middleware: 'auth'
-        })
-
-        return {}
-    }
-}
-</script>
+      </v-dialog>
+    </v-container>
+  </template>
+  
+  <script setup>
+  import { ref, onMounted, computed } from 'vue';
+  import { useRuntimeConfig } from '#imports';
+  
+  const config = useRuntimeConfig();
+  const apiBase = config.public.apiBase;
+  
+  const data = ref({
+    dokumen: []
+  });
+  const search = ref('');
+  const dialog = ref(false);
+  const selectedItem = ref({});
+  
+  const headers = [
+    { title: 'ID', value: 'ID' },
+    { title: 'Nama', value: 'NAMA' },
+    { title: 'No Dokumen', value: 'NO_DOK' },
+    { title: 'Tanggal Dokumen', value: 'TGL_DOK' },
+    { title: 'Status Input', value: 'STATUS_INPUT' },
+    { title: 'Kode Request', value: 'KD_REQ' },
+    { title: 'Consignee', value: 'CONSIGNEE' },
+    { title: 'Response Request', value: 'RESPONSE_REQ' },
+    { title: 'Keterangan', value: 'KETERANGAN' }
+  ];
+  
+  const fetchdata = async () => {
+    const dataFetch = await $fetch(`${apiBase}/gatepass_spjm_index`);
+    data.value.dokumen = dataFetch;
+    console.log(data.value.dokumen);
+  };
+  
+  const filteredItems = computed(() => {
+    if (!search.value) return data.value.dokumen;
+    return data.value.dokumen.filter(item => {
+      return Object.values(item).some(value =>
+        String(value).toLowerCase().includes(search.value.toLowerCase())
+      );
+    });
+  });
+  
+  const handleRowClick = (item) => {
+    selectedItem.value = item;
+    dialog.value = true;
+  };
+  
+  onMounted(fetchdata);
+  </script>
+  
+  <style scoped>
+  /* Add any additional styles here */
+  </style>
+  
