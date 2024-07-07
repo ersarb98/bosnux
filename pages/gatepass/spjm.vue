@@ -1,8 +1,7 @@
 <template>
   <v-container>
     <!-- Add a search input field -->
-    <v-text-field v-model="search" label="Pencarian Cepat (3 Bulan Terakhir)" class="mb-4"
-      append-icon="mdi-magnify"></v-text-field>
+    <v-text-field v-model="search" label="Pencarian Cepat (3 Bulan Terakhir)" class="mb-4" append-icon="mdi-magnify"></v-text-field>
 
     <v-data-table :headers="headers" :items="filteredItems" class="elevation-1" :search="search">
       <template v-slot:item="{ item }">
@@ -16,12 +15,14 @@
           <td>{{ item.CONSIGNEE }}</td>
           <td>{{ item.RESPONSE_REQ }}</td>
           <td>{{ item.KETERANGAN }}</td>
-          <td>{{ item.KETERANGAN }}</td>
+          <td>
+            <v-btn color="primary" @click="openMailModal(item)">Send Mail</v-btn>
+          </td>
         </tr>
       </template>
     </v-data-table>
 
-    <!-- Modal Dialog -->
+    <!-- Row Details Modal Dialog -->
     <v-dialog v-model="dialog" max-width="500">
       <v-card>
         <v-card-title>
@@ -45,6 +46,25 @@
       </v-card>
     </v-dialog>
 
+    <!-- Send Mail Modal Dialog -->
+    <v-dialog v-model="mailDialog" max-width="500">
+      <v-card>
+        <v-card-title>
+          <span class="headline">Send Mail</span>
+        </v-card-title>
+        <v-card-text>
+          <!-- Add your mail form here -->
+          <div>Email: {{ selectedMailItem.EMAIL }}</div>
+          <v-text-field v-model="mailSubject" label="Subject"></v-text-field>
+          <v-textarea v-model="mailBody" label="Body"></v-textarea>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="sendMail">Send</v-btn>
+          <v-btn color="blue darken-1" text @click="mailDialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -60,7 +80,11 @@ const data = ref({
 });
 const search = ref('');
 const dialog = ref(false);
+const mailDialog = ref(false);
 const selectedItem = ref({});
+const selectedMailItem = ref({});
+const mailSubject = ref('');
+const mailBody = ref('');
 
 const headers = [
   { title: 'ID', value: 'ID' },
@@ -91,7 +115,6 @@ const fetchdata = async () => {
   }
 };
 
-
 const filteredItems = computed(() => {
   if (!search.value) return data.value.dokumen;
   return data.value.dokumen.filter(item => {
@@ -104,6 +127,19 @@ const filteredItems = computed(() => {
 const handleRowClick = (item) => {
   selectedItem.value = item;
   dialog.value = true;
+};
+
+const openMailModal = (item) => {
+  selectedMailItem.value = item;
+  mailDialog.value = true;
+};
+
+const sendMail = () => {
+  // Add your mail sending logic here
+  console.log('Sending mail to:', selectedMailItem.value.EMAIL);
+  console.log('Subject:', mailSubject.value);
+  console.log('Body:', mailBody.value);
+  mailDialog.value = false;
 };
 
 onMounted(fetchdata);
