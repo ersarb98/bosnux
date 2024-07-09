@@ -1,6 +1,5 @@
 <template>
   <div>
-    <NuxtLink to="/gatepass/spjm">ke spjm</NuxtLink>
     <ul>
       <li v-for="menu in organizedMenus" :key="menu.ID">
         <i :class="menu.ICON"></i>

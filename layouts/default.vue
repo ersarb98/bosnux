@@ -11,7 +11,7 @@
   <script setup>
   import { ref } from 'vue'
   
-  const isSidenavOpen = ref(false)
+  const isSidenavOpen = ref(true)
   
   function toggleSidenav() {
     isSidenavOpen.value = !isSidenavOpen.value
