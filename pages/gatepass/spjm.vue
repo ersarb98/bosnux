@@ -37,10 +37,10 @@
             <thead>
               <tr>
                 <th class="text-left">ID</th>
-                <th class="text-left">Container Number</th>
-                <th class="text-left">Container Size</th>
-                <th class="text-left">Container Type</th>
-                <th class="text-left">Container Kind</th>
+                <th class="text-left">Nomor Kontainer</th>
+                <th class="text-left">Ukuran</th>
+                <th class="text-left">Type</th>
+                <th class="text-left">Jenis</th>
                 <th class="text-left">ISO Code</th>
                 <th class="text-left">Periksa</th>
               </tr>
