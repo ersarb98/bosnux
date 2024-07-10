@@ -38,9 +38,12 @@ const username = ref('ersarb');
 const password = ref('12345678');
 const router = useRouter();
 
+const config = useRuntimeConfig();
+const apiBase = config.public.apiBase;
+
 const login = async () => {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/login', {
+    const response = await fetch(`${apiBase}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -68,6 +71,36 @@ const login = async () => {
     console.error('An error occurred during login:', error);
   }
 };
+
+// validasi token/session
+
+const validateToken = async () => {
+  const token = localStorage.getItem('auth_token');
+  try {
+    const response = await fetch(`${apiBase}/user`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Invalid token');
+    }
+
+    const data = await response.json();
+    router.push('/');
+  } catch (error) {
+    console.error('Token validation failed:', error.message);
+  }
+};
+
+onMounted(() => {
+  const token = localStorage.getItem('auth_token');
+  if (token) {
+    validateToken(); // Call validateToken on component mount if token exists
+  }
+});
 </script>
 
 

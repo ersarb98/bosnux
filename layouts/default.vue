@@ -5,7 +5,7 @@
             class="fixed top-0 left-0 h-full w-64 bg-gray-100 transition-transform transform z-10">
             <div class="p-2">
                 <div class="items-end">
-                    <button @click="sidebarClose" class="text-gray-700 px-4 py-2 rounded flex items-end">
+                    <button @click="sidebarClose" class="text-gray-700 px-4 py-2 rounded flex items-end ">
                         <!-- SVG icon -->
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -23,7 +23,7 @@
                             <div v-if="menu.TIPE === 'M' && menu.ID_PARENT === null">
                                 <div class="p-1">
                                     <button
-                                        class="text-left inline-block w-full px-4 py-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200">
+                                        class="text-left inline-block w-full px-4 py-2 bg-gray-100 text-gray-800 rounded hover:bg-gray-200" >
                                         <NuxtLink :to="menu.URL" class="inline-block w-full">{{ menu.JUDUL_MENU }}
                                         </NuxtLink>
                                     </button>
@@ -75,6 +75,14 @@
                                     </ul>
                                 </div>
                             </div>
+                        </li>
+                        <li>
+                            <div class="p-1">
+                                <button @click="logout"
+                                    class="text-left inline-block w-full px-4 py-2 bg-red-400 text-gray-800 rounded hover:bg-gray-200">Logout</button>
+                            </div>
+                        </li>
+                        <li class="my-6 p-6 rounded-lg">
                         </li>
                     </ul>
                 </div>
@@ -149,14 +157,11 @@
 <script setup>
 import { ref } from 'vue';
 
-
+//sidebar handle
 const sidebarVisible = ref(true);
-
-
 function sidebarOpen() {
     sidebarVisible.value = true;
 }
-
 function sidebarClose() {
     sidebarVisible.value = false;
 }
@@ -169,20 +174,19 @@ function handleResize() {
         }
     }
 }
-
+//screen size handle
 onMounted(() => {
     if (process.client) {
         handleResize()
         window.addEventListener('resize', handleResize)
     }
 })
-
 onUnmounted(() => {
     if (process.client) {
         window.removeEventListener('resize', handleResize)
     }
 })
-// old code
+// old code lupa buat apaan
 const props = defineProps({
     menu: {
         type: Object,
@@ -191,7 +195,9 @@ const props = defineProps({
 });
 
 // Initial fetch
-const { data, error } = useFetch('http://127.0.0.1:8000/api/menu_spa', {
+const config = useRuntimeConfig();
+const apiBase = config.public.apiBase;
+const { data, error } = useFetch(`${apiBase}/menu_spa`, {
     method: 'POST',
     body: JSON.stringify({ KD_GROUP: 'SPA' }),
     headers: {
@@ -201,8 +207,6 @@ const { data, error } = useFetch('http://127.0.0.1:8000/api/menu_spa', {
 
 const menus = ref([]);
 const organizedMenus = ref([]);
-const openDropdownId = ref(null);
-const openChildDropdownId = ref(null);
 
 function organizeMenus(menus) {
     const menuMap = {};
@@ -226,13 +230,6 @@ function organizeMenus(menus) {
     return rootMenus;
 }
 
-const toggleDropdown = menuId => {
-    openDropdownId.value = openDropdownId.value === menuId ? null : menuId;
-};
-
-const toggleChildDropdown = childId => {
-    openChildDropdownId.value = openChildDropdownId.value === childId ? null : childId;
-};
 
 // update pake accordion
 
@@ -246,7 +243,6 @@ const toggleAccordion = (id) => {
 const toggleChildAccordion = (id) => {
     openChildAccordionId.value = openChildAccordionId.value === id ? null : id;
 };
-
 // Watch for changes in the fetch data
 watch(
     data,
@@ -258,6 +254,44 @@ watch(
     },
     { immediate: true }
 );
+
+// validasi token/session
+const router = useRouter();
+
+const validateToken = async () => {
+    const token = localStorage.getItem('auth_token');
+    try {
+        const response = await fetch(`${apiBase}/user`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+                // Add other headers as needed
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Invalid token'); // Handle non-200 responses
+        }
+    } catch (error) {
+        console.error('Token validation failed:', error.message);
+        router.push('/login'); // Redirect to login page if token is invalid or request fails
+    }
+};
+
+onMounted(() => {
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+        validateToken();
+    } else {
+        router.push('/login'); // Redirect to login page if token does not exist
+    }
+});
+
+//logout
+const logout = () => {
+    localStorage.removeItem('auth_token');
+    router.push('/login');
+};
 </script>
 
 <style>
@@ -268,5 +302,4 @@ watch(
 .dropdown-menu {
     z-index: 10;
 }
-
 </style>

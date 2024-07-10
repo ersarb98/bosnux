@@ -20,7 +20,9 @@ const props = defineProps({
 });
 
 // Initial fetch
-const { data, error } = useFetch('http://127.0.0.1:8000/api/menu_spa', {
+const config = useRuntimeConfig();
+const apiBase = config.public.apiBase;
+const { data, error } = useFetch(`${apiBase}/menu_spa`, {
   method: 'POST',
   body: JSON.stringify({ KD_GROUP: 'SPA' }),
   headers: {
