@@ -82,9 +82,9 @@
                                     class="text-left inline-block w-full px-4 py-2 bg-red-400 text-gray-800 rounded hover:bg-gray-200">Logout</button>
                             </div>
                         </li>
-                        <li class="my-6 p-6 rounded-lg">
-                        </li>
                     </ul>
+                    <div class="my-6 p-6 rounded-lg">
+                    </div>
                 </div>
             </div>
         </div>

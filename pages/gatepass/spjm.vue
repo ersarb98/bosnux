@@ -2,45 +2,80 @@
   <v-container>
     <h1 class="text-2xl pb-3">Request Gatepass SPJM</h1>
     <!-- Add a search input field -->
-    <v-text-field v-model="search" label="Pencarian Cepat (3 Bulan Terakhir)" class="mb-4"
-      append-icon="mdi-magnify"></v-text-field>
-    <div v-if="loading">
-      <div class="flex justify-center items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-          <g>
-            <rect width="2" height="5" x="11" y="1" fill="currentColor" opacity="0.14" />
-            <rect width="2" height="5" x="11" y="1" fill="currentColor" opacity="0.29" transform="rotate(30 12 12)" />
-            <rect width="2" height="5" x="11" y="1" fill="currentColor" opacity="0.43" transform="rotate(60 12 12)" />
-            <rect width="2" height="5" x="11" y="1" fill="currentColor" opacity="0.57" transform="rotate(90 12 12)" />
-            <rect width="2" height="5" x="11" y="1" fill="currentColor" opacity="0.71" transform="rotate(120 12 12)" />
-            <rect width="2" height="5" x="11" y="1" fill="currentColor" opacity="0.86" transform="rotate(150 12 12)" />
-            <rect width="2" height="5" x="11" y="1" fill="currentColor" transform="rotate(180 12 12)" />
-            <animateTransform attributeName="transform" calcMode="discrete" dur="0.75s" repeatCount="indefinite"
-              type="rotate"
-              values="0 12 12;30 12 12;60 12 12;90 12 12;120 12 12;150 12 12;180 12 12;210 12 12;240 12 12;270 12 12;300 12 12;330 12 12;360 12 12" />
-          </g>
-        </svg>
+    <div class=" bg-white p-8 rounded shadow-md w-full mx-auto">
+      <div class="mb-4 mt-1 text-xl font-semibold">
+        Pencarian
+      </div>
+      <form @submit.prevent="handleSubmit">
+        <div class="flex space-x-4 mb-4">
+          <div class="w-1/2">
+            <label for="dokumenField" class="block text-gray-700 text-sm font-bold mb-2">Nomor Dokumen:</label>
+            <input type="text" id="dokumenField" v-model="dokumenValue"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="Nomor Dokumen" />
+          </div>
+          <div class="w-1/2">
+            <label for="kontainerField" class="block text-gray-700 text-sm font-bold mb-2">Nomor Kontainer:</label>
+            <input type="text" id="kontainerField" v-model="kontainerValue"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="Nomor Kontainer" />
+          </div>
+        </div>
+        <div class="flex items-center justify-between">
+          <button type="submit"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            Submit
+          </button>
+        </div>
+      </form>
+      <div class="mt-4 mb-2">
+        <label for="inputField" class="block text-gray-700 text-sm font-bold mb-2">Pencarian Cepat:</label>
+        <input type="text" id="inputField" v-model="search"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          placeholder="Data 3 Bulan Terakhir" />
       </div>
     </div>
-    <div v-else>
-      <v-data-table :headers="headers" :items="filteredItems" class="elevation-1" :search="search">
-        <template v-slot:item="{ item }">
-          <tr @click="handleRowClick(item)">
-            <td>{{ item.ID }}</td>
-            <td>{{ item.NAMA }}</td>
-            <td>{{ item.NO_DOK }}</td>
-            <td>{{ item.TGL_DOK }}</td>
-            <td>{{ item.STATUS_INPUT }}</td>
-            <td>{{ item.KD_REQ }}</td>
-            <td>{{ item.CONSIGNEE }}</td>
-            <td>{{ item.RESPONSE_REQ }}</td>
-            <td>{{ item.KETERANGAN }}</td>
-            <td>
-              <v-btn color="primary" @click.stop="openMailModal(item)">Request</v-btn>
-            </td>
-          </tr>
-        </template>
-      </v-data-table>
+    <div class="mt-8 mb-4">
+      <div v-if="loading">
+        <div class="flex justify-center items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+            <g>
+              <rect width="2" height="5" x="11" y="1" fill="currentColor" opacity="0.14" />
+              <rect width="2" height="5" x="11" y="1" fill="currentColor" opacity="0.29" transform="rotate(30 12 12)" />
+              <rect width="2" height="5" x="11" y="1" fill="currentColor" opacity="0.43" transform="rotate(60 12 12)" />
+              <rect width="2" height="5" x="11" y="1" fill="currentColor" opacity="0.57" transform="rotate(90 12 12)" />
+              <rect width="2" height="5" x="11" y="1" fill="currentColor" opacity="0.71"
+                transform="rotate(120 12 12)" />
+              <rect width="2" height="5" x="11" y="1" fill="currentColor" opacity="0.86"
+                transform="rotate(150 12 12)" />
+              <rect width="2" height="5" x="11" y="1" fill="currentColor" transform="rotate(180 12 12)" />
+              <animateTransform attributeName="transform" calcMode="discrete" dur="0.75s" repeatCount="indefinite"
+                type="rotate"
+                values="0 12 12;30 12 12;60 12 12;90 12 12;120 12 12;150 12 12;180 12 12;210 12 12;240 12 12;270 12 12;300 12 12;330 12 12;360 12 12" />
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div v-else>
+        <v-data-table :headers="headers" :items="filteredItems" class="elevation-1" :search="search">
+          <template v-slot:item="{ item }">
+            <tr @click="handleRowClick(item)">
+              <td>{{ item.ID }}</td>
+              <td>{{ item.NAMA }}</td>
+              <td>{{ item.NO_DOK }}</td>
+              <td>{{ item.TGL_DOK }}</td>
+              <td>{{ item.STATUS_INPUT }}</td>
+              <td>{{ item.KD_REQ }}</td>
+              <td>{{ item.CONSIGNEE }}</td>
+              <td>{{ item.RESPONSE_REQ }}</td>
+              <td>{{ item.KETERANGAN }}</td>
+              <td>
+                <v-btn color="primary" @click.stop="openMailModal(item)">Request</v-btn>
+              </td>
+            </tr>
+          </template>
+        </v-data-table>
+      </div>
     </div>
     <!-- Ketika dobel klik -->
     <v-dialog v-model="dialog" max-width="auto">
@@ -203,7 +238,11 @@ const handleRowClick = (item) => {
 
 const fetchDocumentDetails = async (id) => {
   loading.value = true;
-  const { data, error } = await useFetch('http://127.0.0.1:8000/api/gatepass_spjm_detail', {
+  const token = localStorage.getItem('auth_token');
+  const { data, error } = await useFetch(`${apiBase}/gatepass_spjm_detail`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
     method: 'POST',
     body: { id },
   });
@@ -234,6 +273,39 @@ const ProsesSend = () => {
     alert('Send Data ID ' + idSelectedItem + ' ' + 'kontainer cek di console')
   }
 };
+
+//searchbox
+const dokumenValue = ref('')
+const kontainerValue = ref('')
+
+const handleSubmit = async () => {
+  loading.value = true;
+  if (!dokumenValue.value && !kontainerValue.value) {
+    fetchdata();
+    return;
+  }
+  const token = localStorage.getItem('auth_token');
+  try {
+    const responseData = await $fetch(`${apiBase}/search_gatepass_spjm`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        dok: dokumenValue.value,
+        cont: kontainerValue.value
+      })
+    });
+
+    data.value.dokumen = responseData;
+  } catch (error) {
+    console.error('Error:', error);
+    alert(error);
+  } finally {
+    loading.value = false;
+  }
+}
 
 onMounted(fetchdata);
 
