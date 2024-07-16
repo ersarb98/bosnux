@@ -77,7 +77,7 @@
         </v-data-table>
       </div>
     </div>
-    <!-- Ketika dobel klik -->
+    <!-- DETAIL Ketika dobel klik -->
     <v-dialog v-model="dialog" max-width="auto">
       <v-card>
         <div class="py-4 px-2">
@@ -85,6 +85,7 @@
             <span class="headline">Detail Dokumen {{ selectedItem?.NO_DOK }}</span>
           </v-card-title>
         </div>
+        <div class="p4 ml-4 text-2xl">Consignee : {{ selectedItem?.CONSIGNEE }}</div>
         <div class="py-4 px-2">
           <table class="min-w-full bg-white" v-if="!loading && documentDetails.length">
             <thead>
@@ -125,9 +126,12 @@
     <v-dialog v-model="mailDialog" max-width="auto">
       <v-card class="w-3/4 mx-auto">
         <v-card-title>
-          <span class="headline">Set Paid Trough</span>
+          <span class="ml-4 text-2xl">Set Paid Trough : {{ selectedItem?.CONSIGNEE }}</span>
         </v-card-title>
-        <div class="py-4 px-2">
+        <div class="p4 ml-4 mt-2 flex-auto">
+          <h1>Dokumen : {{ selectedItem?.NO_DOK }} Tanggal {{ selectedItem?.TGL_DOK }}</h1>
+        </div>
+        <div class="p4 ml-4 mt-2 flex-auto">
           <label for="birthdaytime">Set Waktu Keluar : </label>
           <input type="datetime-local" id="birthdaytime" name="birthdaytime">
         </div>
