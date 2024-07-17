@@ -193,6 +193,7 @@ const mailDialog = ref(false);
 const selectedItem = ref({});
 const selectedMailItem = ref({});
 const loading = ref(false);
+const loadingmodal = ref(false);
 const documentDetails = ref([]);
 const selectedDetails = ref([]);
 
@@ -241,7 +242,8 @@ const handleRowClick = (item) => {
 };
 
 const fetchDocumentDetails = async (id) => {
-  loading.value = true;
+  console.log(id)
+  loadingmodal.value = true;
   const token = localStorage.getItem('auth_token');
   const { data, error } = await useFetch(`${apiBase}/gatepass_spjm_detail`, {
     headers: {
@@ -257,7 +259,7 @@ const fetchDocumentDetails = async (id) => {
   } else {
     documentDetails.value = data.value; // Adjust this based on the structure of your response
   }
-  loading.value = false;
+  loadingmodal.value = false;
 };
 
 const openMailModal = (item) => {
@@ -283,7 +285,7 @@ const dokumenValue = ref('')
 const kontainerValue = ref('')
 
 const handleSubmit = async () => {
-  loading.value = true;
+  loadingmodal.value = true;
   if (!dokumenValue.value && !kontainerValue.value) {
     fetchdata();
     return;
@@ -307,7 +309,7 @@ const handleSubmit = async () => {
     console.error('Error:', error);
     alert(error);
   } finally {
-    loading.value = false;
+    loadingmodal.value = false;
   }
 }
 
