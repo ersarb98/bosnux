@@ -35,6 +35,7 @@
           placeholder="Data 3 Bulan Terakhir" />
       </div>
     </div>
+    <!-- table -->
     <div class="mt-8 mb-4">
       <div v-if="loading">
         <div class="flex justify-center items-center">
